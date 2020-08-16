@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 
+import Card from "./Card";
 import useDeck from "./useDeck";
 
 function App() {
@@ -9,8 +10,8 @@ function App() {
   return (
     <div className="App">
       <button onClick={handleDraw}>draw</button>
-      <div>last card drawn: {lastCard}</div>
       <div>cards in deck: {deck.length}</div>
+      {lastCard && <Card {...lastCard} />}
     </div>
   );
 }
