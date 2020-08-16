@@ -1,24 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+
+import useDeck from "./useDeck";
 
 function App() {
+  const { deck, lastCard, handleDraw } = useDeck();
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={handleDraw}>draw</button>
+      <div>last card drawn: {lastCard}</div>
+      <div>cards in deck: {deck.length}</div>
     </div>
   );
 }
