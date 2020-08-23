@@ -4,7 +4,8 @@ import { useHistory } from "react-router-dom";
 
 import { randomString } from "../utils";
 
-export default function Home() {
+export default function Home(props) {
+  const { socket } = props;
   const history = useHistory();
 
   const createRoom = () => {

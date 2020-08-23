@@ -1,18 +1,21 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import "./App.css";
+import io from "socket.io-client";
 
+import "./App.css";
 import { Home, Game } from "./components";
 
 function App() {
+  const socket = io("http://localhost:8000");
+
   return (
     <Router>
       <Switch>
         <Route path="/g/:id">
-          <Game />
+          <Game socket={socket} />
         </Route>
         <Route path="/">
-          <Home />
+          <Home socket={socket} />
         </Route>
       </Switch>
     </Router>
