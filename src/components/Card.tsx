@@ -2,7 +2,7 @@ import React from "react";
 
 import styled from "styled-components";
 
-import { CardInfo as CardProps } from "./cards";
+import { CardInfo as CardProps } from "../utils/cards";
 
 const CardWrapper = styled.div`
   margin: 20px;

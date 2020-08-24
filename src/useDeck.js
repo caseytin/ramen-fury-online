@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NUMBER_OF_COPIES, CARD_OBJECTS } from "./cards";
+import { NUMBER_OF_COPIES, CARD_OBJECTS } from "./utils/cards";
 
 export default function useDeck() {
   const initialDeck = initializeDeck();

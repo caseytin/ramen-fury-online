@@ -10,7 +10,7 @@ function handleJoin(socket, room) {
     openRooms.set(room, newMap);
   }
   socket.join(room);
-  const playerlist = Array.from(openRooms.get(room).keys()).join(", ");
+  const playerlist = Array.from(openRooms.get(room).keys());
   io.in(room).emit("playerlist update", playerlist);
 }
 

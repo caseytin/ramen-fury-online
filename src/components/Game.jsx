@@ -1,5 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import styled from "styled-components";
+
+import { H1 } from "./typography";
+
+const PlayerListWrapper = styled.div`
+  border: 1px solid black;
+  border-radius: 20px;
+  padding: 20px 20px;
+  margin: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 300px;
+`;
+
+function PlayerList(props) {
+  const { players } = props;
+
+  return (
+    <PlayerListWrapper>
+      <div>players</div>
+      <ul>
+        {players.map((player) => (
+          <li key={player}>{player}</li>
+        ))}
+      </ul>
+    </PlayerListWrapper>
+  );
+}
 
 export default function Game(props) {
   const { socket } = props;
@@ -13,13 +42,14 @@ export default function Game(props) {
     });
 
     socket.emit("join", room);
+    // eslint-disable-next-line
   }, []);
 
   return (
     <div>
-      <h1>game lobby</h1>
+      <H1>Game Lobby</H1>
       <div>room id: {room}</div>
-      <div>players: {players}</div>
+      <PlayerList players={players} />
     </div>
   );
 }
