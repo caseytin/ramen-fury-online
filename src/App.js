@@ -11,7 +11,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/g/:id">
+        <Route path="/g/:room">
           <Game socket={socket} />
         </Route>
         <Route path="/">
