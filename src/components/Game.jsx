@@ -37,7 +37,6 @@ export default function Game(props) {
 
   useEffect(() => {
     socket.on("playerlist update", (list) => {
-      console.log("ok", list);
       setPlayers(list);
     });
 

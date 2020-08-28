@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import io from "socket.io-client";
 import styled from "styled-components";
 
-import "./App.css";
 import { Home, Game } from "./components";
 
 const ContentWrapper = styled.div`
