@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { randomUsername } from "../utils";
+
 import { H1 } from "./typography";
 
 const PlayerListWrapper = styled.div`
@@ -15,7 +17,11 @@ const PlayerListWrapper = styled.div`
   max-width: 300px;
 `;
 
-function PlayerList(props) {
+type PlayerListProps = {
+  players: Array<string>;
+};
+
+function PlayerList(props: PlayerListProps) {
   const { players } = props;
 
   return (
@@ -30,17 +36,23 @@ function PlayerList(props) {
   );
 }
 
-export default function Game(props) {
+type GameProps = {
+  socket: SocketIO.Socket;
+};
+
+export default function Game(props: GameProps) {
   const { socket } = props;
-  let { room } = useParams();
-  let [players, setPlayers] = useState([]);
+  let { room } = useParams<{ room: string }>();
+
+  let [username, setUsername] = useState<string>(randomUsername());
+  let [players, setPlayers] = useState<Array<string>>([]);
 
   useEffect(() => {
-    socket.on("playerlist update", (list) => {
+    socket.on("playerlist update", (list: Array<string>) => {
       setPlayers(list);
     });
 
-    socket.emit("join", room);
+    socket.emit("join", room, username);
     // eslint-disable-next-line
   }, []);
 

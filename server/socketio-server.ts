@@ -1,20 +1,50 @@
+type Player = {
+  sid: string; // player's socket ID
+  username: string; // readable username for the player
+};
+
 const io = require("socket.io")();
 
-const openRooms = new Map<string, Set<string>>([]);
+// a mapping from room IDs to players in that room
+const openRooms = new Map<string, Set<Player>>([]);
 
-function handleJoin(socket: SocketIO.Socket, room: string): void {
+// a mapping from client socket IDs to usernames
+const usernames = new Map<string, string>([]);
+
+// gives a list of usernames in the given room
+function constructPlayerlist(room: string): Array<string> {
+  const playerSet = openRooms.get(room);
+  if (playerSet == null) {
+    return [];
+  }
+  const playerArray = Array.from(playerSet.values());
+  return playerArray.map((player) => player.username);
+}
+
+// updates server's state of rooms whenever a player joins a room
+function handleJoin(
+  socket: SocketIO.Socket,
+  room: string,
+  username: string
+): void {
   const players = openRooms.get(room);
+  const player = {
+    sid: socket.id,
+    username: username,
+  };
   if (players != null) {
-    players.add(socket.id);
+    players.add(player);
   } else {
-    openRooms.set(room, new Set([socket.id]));
+    openRooms.set(room, new Set([player]));
   }
 
   socket.join(room);
-  const playerlist = Array.from(openRooms.get(room)!.values());
+
+  const playerlist = constructPlayerlist(room);
   io.in(room).emit("playerlist update", playerlist);
 }
 
+// updates server's state of rooms whenever a player leaves a room
 function handleDisconnecting(socket: SocketIO.Socket) {
   for (let room of Object.keys(socket.rooms)) {
     const players = openRooms.get(room);
@@ -22,19 +52,26 @@ function handleDisconnecting(socket: SocketIO.Socket) {
       continue;
     }
 
-    players.delete(socket.id);
+    players.forEach((player) => {
+      if (socket.id === player.sid) {
+        players.delete(player);
+      }
+    });
 
     if (players.size === 0) {
       openRooms.delete(room);
     }
 
-    const playerlist = Array.from(players.keys());
+    const playerlist = constructPlayerlist(room);
     io.in(room).emit("playerlist update", playerlist);
   }
 }
 
+// runs every time a new client connects to the server
 io.on("connection", (socket: SocketIO.Socket) => {
-  socket.on("join", (room: string) => handleJoin(socket, room));
+  socket.on("join", (room: string, username: string) =>
+    handleJoin(socket, room, username)
+  );
   socket.on("disconnecting", () => handleDisconnecting(socket));
 });
 
