@@ -18,18 +18,21 @@ const PlayerListWrapper = styled.div`
 `;
 
 type PlayerListProps = {
+  username: string;
   players: Array<string>;
 };
 
 function PlayerList(props: PlayerListProps) {
-  const { players } = props;
+  const { username, players } = props;
 
   return (
     <PlayerListWrapper>
       <div>players</div>
       <ul>
         {players.map((player) => (
-          <li key={player}>{player}</li>
+          <li key={player}>
+            {username === player ? `${player} (you!)` : `${player}`}
+          </li>
         ))}
       </ul>
     </PlayerListWrapper>
@@ -45,12 +48,17 @@ export default function Game(props: GameProps) {
   let { room } = useParams<{ room: string }>();
 
   let [username, setUsername] = useState<string>(randomUsername());
+  let [isLeader, setIsLeader] = useState<boolean>(false);
   let [players, setPlayers] = useState<Array<string>>([]);
 
   useEffect(() => {
-    socket.on("playerlist update", (list: Array<string>) => {
-      setPlayers(list);
-    });
+    socket.on(
+      "room update",
+      (data: { playerlist: string[]; leader: string }) => {
+        setPlayers(data.playerlist);
+        setIsLeader(data.leader === socket.id);
+      }
+    );
 
     socket.emit("join", room, username);
     // eslint-disable-next-line
@@ -60,7 +68,8 @@ export default function Game(props: GameProps) {
     <div>
       <H1>Game Lobby</H1>
       <div>room id: {room}</div>
-      <PlayerList players={players} />
+      <PlayerList username={username} players={players} />
+      {isLeader && <div>you are the room leader</div>}
     </div>
   );
 }

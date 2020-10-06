@@ -4,6 +4,8 @@ var io = require("socket.io")();
 var openRooms = new Map([]);
 // a mapping from client socket IDs to usernames
 var usernames = new Map([]);
+// a mapping from room IDs to game states in those rooms
+var gameStates = new Map([]);
 // gives a list of usernames in the given room
 function constructPlayerlist(room) {
     var playerSet = openRooms.get(room);
@@ -25,10 +27,16 @@ function handleJoin(socket, room, username) {
     }
     else {
         openRooms.set(room, new Set([player]));
+        // make this player the room leader
+        gameStates.set(room, { leader: socket.id });
     }
     socket.join(room);
     var playerlist = constructPlayerlist(room);
-    io.in(room).emit("playerlist update", playerlist);
+    var leader = gameStates.get(room).leader;
+    io.in(room).emit("room update", {
+        playerlist: playerlist,
+        leader: leader,
+    });
 }
 // updates server's state of rooms whenever a player leaves a room
 function handleDisconnecting(socket) {
@@ -37,16 +45,26 @@ function handleDisconnecting(socket) {
         if (players == null) {
             return "continue";
         }
+        var isLeader = gameStates.get(room).leader === socket.id;
         players.forEach(function (player) {
-            if (socket.id === player.sid) {
+            if (player.sid === socket.id) {
                 players.delete(player);
             }
         });
         if (players.size === 0) {
             openRooms.delete(room);
         }
+        else if (isLeader) {
+            // pick a new leader
+            var newLeader = players.values().next().value;
+            gameStates.set(room, { leader: newLeader.sid });
+        }
         var playerlist = constructPlayerlist(room);
-        io.in(room).emit("playerlist update", playerlist);
+        var leader = gameStates.get(room).leader;
+        io.in(room).emit("room update", {
+            playerlist: playerlist,
+            leader: leader,
+        });
     };
     for (var _i = 0, _a = Object.keys(socket.rooms); _i < _a.length; _i++) {
         var room = _a[_i];
