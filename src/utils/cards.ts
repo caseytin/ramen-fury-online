@@ -1,9 +1,9 @@
-interface CardInfo {
+type CardInfo = {
   name: string;
   isMeat: boolean;
   isVeggie: boolean;
   isFlavor: boolean;
-}
+};
 
 interface Dictionary<T> {
   [key: string]: T;

@@ -7,7 +7,7 @@ type GameState = {
   leader: string; // room leader's socket ID
 };
 
-const io = require("socket.io")();
+const sio = require("socket.io")();
 
 // a mapping from room IDs to players in that room
 const openRooms = new Map<string, Set<Player>>([]);
@@ -52,7 +52,7 @@ function handleJoin(
   const playerlist = constructPlayerlist(room);
   const leader = gameStates.get(room)!.leader;
 
-  io.in(room).emit("room update", {
+  sio.in(room).emit("room update", {
     playerlist,
     leader,
   });
@@ -85,7 +85,7 @@ function handleDisconnecting(socket: SocketIO.Socket) {
     const playerlist = constructPlayerlist(room);
     const leader = gameStates.get(room)!.leader;
 
-    io.in(room).emit("room update", {
+    sio.in(room).emit("room update", {
       playerlist,
       leader,
     });
@@ -93,13 +93,16 @@ function handleDisconnecting(socket: SocketIO.Socket) {
 }
 
 // runs every time a new client connects to the server
-io.on("connection", (socket: SocketIO.Socket) => {
+sio.on("connection", (socket: SocketIO.Socket) => {
   socket.on("join", (room: string, username: string) =>
     handleJoin(socket, room, username)
   );
   socket.on("disconnecting", () => handleDisconnecting(socket));
+  socket.on("start game", (room: string, username: string) => {
+    console.log(`game started in room ${room} by ${username}`);
+  });
 });
 
 const port = 8000;
-io.listen(port);
+sio.listen(port);
 console.log(`socket.io server running on port ${port}`);

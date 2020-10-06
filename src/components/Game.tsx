@@ -1,49 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
 
 import { randomUsername } from "../utils";
 
-import { H1 } from "./typography";
+import { Lobby } from "./Lobby";
 
-const PlayerListWrapper = styled.div`
-  border: 1px solid black;
-  border-radius: 20px;
-  padding: 20px 20px;
-  margin: 20px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-width: 300px;
-`;
-
-type PlayerListProps = {
-  username: string;
-  players: Array<string>;
-};
-
-function PlayerList(props: PlayerListProps) {
-  const { username, players } = props;
-
-  return (
-    <PlayerListWrapper>
-      <div>players</div>
-      <ul>
-        {players.map((player) => (
-          <li key={player}>
-            {username === player ? `${player} (you!)` : `${player}`}
-          </li>
-        ))}
-      </ul>
-    </PlayerListWrapper>
-  );
-}
-
-type GameProps = {
-  socket: SocketIO.Socket;
-};
-
-export default function Game(props: GameProps) {
+export const Game = (props: { socket: SocketIOClient.Socket }) => {
   const { socket } = props;
   let { room } = useParams<{ room: string }>();
 
@@ -64,12 +26,19 @@ export default function Game(props: GameProps) {
     // eslint-disable-next-line
   }, []);
 
+  const startGame = () => {
+    console.log("game started by room leader!");
+    socket.emit("start game", room, username);
+  };
+
   return (
-    <div>
-      <H1>Game Lobby</H1>
-      <div>room id: {room}</div>
-      <PlayerList username={username} players={players} />
-      {isLeader && <div>you are the room leader</div>}
-    </div>
+    // todo: show a different component when the game starts
+    <Lobby
+      room={room}
+      username={username}
+      players={players}
+      isLeader={isLeader}
+      startGame={startGame}
+    />
   );
-}
+};

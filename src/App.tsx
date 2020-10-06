@@ -12,7 +12,7 @@ const ContentWrapper = styled.div`
   justify-content: center;
 `;
 
-function App() {
+const App = () => {
   const socket = io("http://localhost:8000");
 
   return (
@@ -29,6 +29,6 @@ function App() {
       </ContentWrapper>
     </Router>
   );
-}
+};
 
 export default App;

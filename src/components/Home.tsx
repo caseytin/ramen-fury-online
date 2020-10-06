@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { randomString } from "../utils";
 import { H1 } from "./typography";
 
-export default function Home(props) {
+export const Home = (props: { socket: SocketIOClient.Socket }) => {
   const history = useHistory();
 
   const createRoom = () => {
@@ -18,4 +18,4 @@ export default function Home(props) {
       <button onClick={createRoom}>create room</button>
     </div>
   );
-}
+};

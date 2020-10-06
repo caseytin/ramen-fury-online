@@ -1,5 +1,5 @@
 "use strict";
-var io = require("socket.io")();
+var sio = require("socket.io")();
 // a mapping from room IDs to players in that room
 var openRooms = new Map([]);
 // a mapping from client socket IDs to usernames
@@ -33,7 +33,7 @@ function handleJoin(socket, room, username) {
     socket.join(room);
     var playerlist = constructPlayerlist(room);
     var leader = gameStates.get(room).leader;
-    io.in(room).emit("room update", {
+    sio.in(room).emit("room update", {
         playerlist: playerlist,
         leader: leader,
     });
@@ -61,7 +61,7 @@ function handleDisconnecting(socket) {
         }
         var playerlist = constructPlayerlist(room);
         var leader = gameStates.get(room).leader;
-        io.in(room).emit("room update", {
+        sio.in(room).emit("room update", {
             playerlist: playerlist,
             leader: leader,
         });
@@ -72,12 +72,15 @@ function handleDisconnecting(socket) {
     }
 }
 // runs every time a new client connects to the server
-io.on("connection", function (socket) {
+sio.on("connection", function (socket) {
     socket.on("join", function (room, username) {
         return handleJoin(socket, room, username);
     });
     socket.on("disconnecting", function () { return handleDisconnecting(socket); });
+    socket.on("start game", function (room, username) {
+        console.log("game started in room " + room + " by " + username);
+    });
 });
 var port = 8000;
-io.listen(port);
-console.log("listening on port " + port);
+sio.listen(port);
+console.log("socket.io server running on port " + port);
