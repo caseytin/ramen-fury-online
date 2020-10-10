@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 
 import { randomUsername } from "../utils";
 
+import { ActiveGame } from "./ActiveGame";
 import { Lobby } from "./Lobby";
+import type { Player, GameState } from "./types";
 
 export const Game = (props: { socket: SocketIOClient.Socket }) => {
   const { socket } = props;
@@ -11,14 +13,26 @@ export const Game = (props: { socket: SocketIOClient.Socket }) => {
 
   let [username, setUsername] = useState<string>(randomUsername());
   let [isLeader, setIsLeader] = useState<boolean>(false);
-  let [players, setPlayers] = useState<Array<string>>([]);
+  let [started, setStarted] = useState<boolean>(false);
+  let [players, setPlayers] = useState<string[]>([]);
+  let [turnOrder, setTurnOrder] = useState<Player[] | undefined>(undefined);
+  let [turnIndex, setTurnIndex] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     socket.on(
-      "room update",
+      "lobby update",
       (data: { playerlist: string[]; leader: string }) => {
         setPlayers(data.playerlist);
         setIsLeader(data.leader === socket.id);
+      }
+    );
+
+    socket.on(
+      "state update",
+      ({ started, turnOrder, turnIndex }: GameState) => {
+        setStarted(started);
+        setTurnOrder(turnOrder);
+        setTurnIndex(turnIndex);
       }
     );
 
@@ -31,8 +45,11 @@ export const Game = (props: { socket: SocketIOClient.Socket }) => {
     socket.emit("start game", room, username);
   };
 
+  if (started) {
+    return <ActiveGame turnOrder={turnOrder} turnIndex={turnIndex} />;
+  }
+
   return (
-    // todo: show a different component when the game starts
     <Lobby
       room={room}
       username={username}

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { NUMBER_OF_COPIES, CARD_OBJECTS, CardInfo } from "./utils/cards";
+import { NUMBER_OF_COPIES, CARD_OBJECTS } from "./utils/cards";
+import shuffle from "./utils/shuffle";
 
 export default function useDeck() {
   const initialDeck = initializeDeck();
@@ -27,14 +28,4 @@ const initializeDeck = () => {
 
 const makeCard = (card: string) => {
   return { ...CARD_OBJECTS[card] };
-};
-
-// Shuffles an array using the Fisher-Yates shuffle algorithm.
-// https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
-const shuffle = (deck: any[]) => {
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-  return deck;
 };
