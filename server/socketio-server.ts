@@ -201,7 +201,7 @@ function handleGameStart(
 
 // runs every time a new client connects to the server
 sio.on("connection", (socket: SocketIO.Socket) => {
-  socket.on("join", (room: string, username: string) =>
+  socket.on("join room", (room: string, username: string) =>
     handleJoin(socket, room, username)
   );
   socket.on("disconnecting", () => handleDisconnecting(socket));

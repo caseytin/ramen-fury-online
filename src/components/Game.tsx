@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { randomUsername } from "../utils";
 
-import { ActiveGame } from "./ActiveGame";
+import ActiveGame from "./ActiveGame";
 import { Lobby } from "./Lobby";
 import type { GameState, Card, HandState, Player } from "./types";
 
@@ -45,7 +45,7 @@ export const Game = (props: { socket: SocketIOClient.Socket }) => {
       setHand(hand);
     });
 
-    socket.emit("join", room, username);
+    socket.emit("join room", room, username);
     // eslint-disable-next-line
   }, []);
 
