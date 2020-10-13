@@ -8,4 +8,16 @@ export type GameState = {
   started: boolean; // whether the game has begun
   turnOrder?: Player[]; // player turn order
   turnIndex?: number; // keeping track of whose turn it is
+  pantry?: Card[]; // cards in the pantry: there should always be four
+};
+
+export type Card = {
+  name: string;
+  isMeat: boolean;
+  isVeggie: boolean;
+  isFlavor: boolean;
+};
+
+export type HandState = {
+  hand: Card[];
 };

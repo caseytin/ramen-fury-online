@@ -1,4 +1,4 @@
-type CardInfo = {
+type Card = {
   name: string;
   isMeat: boolean;
   isVeggie: boolean;
@@ -9,7 +9,7 @@ interface Dictionary<T> {
   [key: string]: T;
 }
 
-const NUMBER_OF_COPIES: Dictionary<number> = {
+const numberOfCopies: Dictionary<number> = {
   chiliPeppers: 12,
   noriGarnish: 8,
   scallion: 6,
@@ -26,7 +26,7 @@ const NUMBER_OF_COPIES: Dictionary<number> = {
   furyFlavor: 3,
 };
 
-const CARD_OBJECTS: Dictionary<CardInfo> = {
+const cardObjects: Dictionary<Card> = {
   chiliPeppers: {
     name: "Chili Peppers",
     isMeat: false,
@@ -113,5 +113,7 @@ const CARD_OBJECTS: Dictionary<CardInfo> = {
   },
 };
 
-export { NUMBER_OF_COPIES, CARD_OBJECTS };
-export type { CardInfo };
+module.exports = {
+  NUMBER_OF_COPIES: numberOfCopies,
+  CARD_OBJECTS: cardObjects,
+};

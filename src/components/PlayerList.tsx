@@ -12,19 +12,19 @@ const PlayerListWrapper = styled.div`
   max-width: 300px;
 `;
 
-type PlayerListProps = {
+type Props = {
   username: string;
-  players: Array<string>;
+  playerlist: string[];
 };
 
-export const PlayerList = (props: PlayerListProps) => {
-  const { username, players } = props;
+export const PlayerList = (props: Props) => {
+  const { username, playerlist } = props;
 
   return (
     <PlayerListWrapper>
       <div>players</div>
       <ul>
-        {players.map((player) => (
+        {playerlist.map((player) => (
           <li key={player}>
             {username === player ? `${player} (you!)` : `${player}`}
           </li>

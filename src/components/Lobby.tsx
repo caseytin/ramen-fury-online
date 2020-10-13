@@ -6,7 +6,7 @@ import { H1 } from "./typography";
 type LobbyProps = {
   room: string;
   username: string;
-  players: string[];
+  playerlist: string[];
   isLeader: boolean;
   startGame: () => void;
 };
@@ -14,7 +14,7 @@ type LobbyProps = {
 export const Lobby = ({
   room,
   username,
-  players,
+  playerlist,
   isLeader,
   startGame,
 }: LobbyProps) => {
@@ -22,7 +22,7 @@ export const Lobby = ({
     <div>
       <H1>Game Lobby</H1>
       <div>room id: {room}</div>
-      <PlayerList username={username} players={players} />
+      <PlayerList username={username} playerlist={playerlist} />
       {isLeader && (
         <>
           <div>you are the room leader</div>
